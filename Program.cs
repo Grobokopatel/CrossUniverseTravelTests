@@ -130,7 +130,7 @@ namespace CrossUniverseTravelTests
         }
 
         /// <summary>
-        /// Тупой способ подсчёта расстояние перебором
+        /// Тупой способ подсчёта расстояния перебором
         /// </summary>
         public static int[] GetHopsCountDumb(Point[] points, double r)
         {
