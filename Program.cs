@@ -139,7 +139,7 @@ namespace CrossUniverseTravelTests
 
 
         /// <summary>
-        /// По массиву координат точек вернуть массив списков, где i-тый список - инциндентные точки i-той точки
+        /// По сетке вернуть массив списков, где i-тый список - инциндентные точки i-той точки
         /// </summary>
         public static List<int>[] GetAdjacentPoints(List<int>[,,] grid, Point[] points, double r)
         {
