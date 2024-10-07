@@ -1,4 +1,8 @@
-﻿namespace CrossUniverseTravelTests
+﻿using System.Collections.Generic;
+using System;
+using System.Linq;
+
+namespace CrossUniverseTravelTests
 {
     // Класс для хранения координат звёзд
     public struct Point
