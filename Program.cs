@@ -124,7 +124,7 @@ namespace CrossUniverseTravelTests
             var grid = GetGrid(points, fieldSideLength, gridCellLength);
             // i-тый элемент adjacentPoints содержит все инцидентные звёзды i-той звезды
             var adjacentPoints = GetAdjacentPoints(grid, points, r);
-            var hops = Dfs(adjacentPoints);
+            var hops = Bfs(adjacentPoints);
 
             return hops;
         }
@@ -134,7 +134,7 @@ namespace CrossUniverseTravelTests
         /// </summary>
         public static int[] GetHopsCountDumb(Point[] points, double r)
         {
-            return Dfs(GetAdjacentPointsDumb(points, r));
+            return Bfs(GetAdjacentPointsDumb(points, r));
         }
 
 
@@ -225,7 +225,7 @@ namespace CrossUniverseTravelTests
         /// <summary>
         /// Поиск в ширину, где на каждом шаге я прибавляю 1 к предыдущему посчитанному расстоянию
         /// </summary>
-        public static int[] Dfs(List<int>[] adjacentPoints)
+        public static int[] Bfs(List<int>[] adjacentPoints)
         {
             var distance = new int[adjacentPoints.Length];
             Array.Fill(distance, -1);
