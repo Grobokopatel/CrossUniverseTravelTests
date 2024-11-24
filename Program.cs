@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace CrossUniverseTravelTests
@@ -40,19 +41,26 @@ namespace CrossUniverseTravelTests
             // Это мне для отладки, у меня консоль в Райдере иногда не работает
             Console.WriteLine("Here");
             // Количество звёзд
-            const int pointsCount = 1000;
+            const int pointsCount = 10000;
             // Максимальное расстояние на которое может прыгнуть корабль
             const double r = 0.15;
             // У меня все звёзды располагаются в кубе со стороной fieldSideLength и у всех звёзд неотрицательные координаты.
-            const double fieldSideLength = 1;
+            const double fieldSideLength = 2;
             // Длина стороны ячейки сетки. Минимальное, при котором всё будет правильно работать - r. Максимальное - fieldSideLength.
             const double gridCellLength = r;
             // Количество итераций
             const int testsCount = 10;
 
-            TestThatGetHopsCountIsCorrect(pointsCount, r, gridCellLength, fieldSideLength, testsCount);
+            Console.WriteLine("Поиск смежных вершин в тупую");
+            MeasureTime(pointsCount, r, fieldSideLength, testsCount, gridCellLength, false);
+            Console.WriteLine();
+            Console.WriteLine("Поиск смежных вершин с помощью сетки");
+            MeasureTime(pointsCount, r, fieldSideLength, testsCount, gridCellLength, true);
+            Console.WriteLine();
 
-            // WriteHopsOrdered(pointsCount, r, gridCellLength, fieldSideLength);
+            //TestThatGetHopsCountIsCorrect(pointsCount, r, gridCellLength, fieldSideLength, testsCount);
+
+             //WriteHopsOrdered(pointsCount, r, gridCellLength, fieldSideLength);
         }
 
         /// <summary>
@@ -61,7 +69,8 @@ namespace CrossUniverseTravelTests
         /// </summary>
         public static void WriteHopsOrdered(int pointsCount, double r, double gridCellLength, double fieldSideLength)
         {
-            var hops = GetHopsCount(GetRandomPoints(pointsCount, fieldSideLength), r, fieldSideLength, gridCellLength);
+            var hops = GetHopsCountSmart(GenerateRandomPoints(pointsCount, fieldSideLength), r, fieldSideLength,
+                gridCellLength);
             var ordered = hops.Select((d, i) => (d, i))
                 .OrderBy(di => di.d)
                 .ToArray();
@@ -72,6 +81,36 @@ namespace CrossUniverseTravelTests
             }
         }
 
+        public static void MeasureTime(int pointsCount, double r, double fieldSideLength, int iterationCount,
+            double gridCellLength, bool useSmartWay)
+        {
+            var points = new Point[iterationCount][];
+            for (var i = 0; i < iterationCount; i++)
+            {
+                points[i] = GenerateRandomPoints(pointsCount, fieldSideLength);
+            }
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (var i = 0; i < iterationCount; ++i)
+            {
+                if (useSmartWay)
+                {
+                    GetHopsCountSmart(points[i], r, fieldSideLength, gridCellLength);
+                }
+                else
+                {
+                    GetHopsCountDumb(points[i], r);
+                }
+            }
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Всего потрачено времени: {(double)stopwatch.ElapsedMilliseconds / 1000} секунд");
+            Console.WriteLine(
+                $"В среднем на одну итерацию: {(double)stopwatch.ElapsedMilliseconds / iterationCount / 1000} секунд");
+        }
+
         private static void TestThatGetHopsCountIsCorrect(int pointsCount, double r,
             double gridCellLength, double fieldSideLength, int testsCount)
         {
@@ -79,18 +118,18 @@ namespace CrossUniverseTravelTests
             for (var i = 0; i < testsCount; ++i)
             {
                 // У меня все звёзды пронумерованы от 0 до pointsCount - 1
-                var points = GetRandomPoints(pointsCount, fieldSideLength);
+                var points = GenerateRandomPoints(pointsCount, fieldSideLength);
                 // Наш способ подсчёта расстояния
-                var hops = GetHopsCount(points, r, fieldSideLength, gridCellLength);
+                var hopsSmart = GetHopsCountSmart(points, r, fieldSideLength, gridCellLength);
                 // Подсчёт расстояния в тупую (точно работает правильно)
                 var hopsDumb = GetHopsCountDumb(points, r);
 
                 for (int j = 0; j < points.Length; j++)
                 {
-                    if (hops[j] != hopsDumb[j])
+                    if (hopsSmart[j] != hopsDumb[j])
                     {
                         Console.WriteLine(
-                            $"Неправильно расстояние для {i} итерации {j} звезды. Расстояние: {hops[j]}. Ожидаемое: {hopsDumb[j]}");
+                            $"Неправильно расстояние для {i} итерации {j} звезды. Расстояние: {hopsSmart[j]}. Ожидаемое: {hopsDumb[j]}");
                         getHopsCountIsCorrect = false;
                     }
                 }
@@ -102,7 +141,7 @@ namespace CrossUniverseTravelTests
             }
         }
 
-        public static Point[] GetRandomPoints(int pointCount, double fieldSideLength)
+        public static Point[] GenerateRandomPoints(int pointCount, double fieldSideLength)
         {
             var points = new Point[pointCount];
 
@@ -115,16 +154,21 @@ namespace CrossUniverseTravelTests
             return points;
         }
 
+        public static int[] GetHopsCountToEveryPointWithBfs(List<int>[] adjacentPoints)
+        {
+            return Bfs(adjacentPoints);
+        }
+
         /// <summary>
         /// Тот способ подсчёта расстояния, который мы используем в коллабе
         /// </summary>
-        public static int[] GetHopsCount(Point[] points, double r, double fieldSideLength, double gridCellLength)
+        public static int[] GetHopsCountSmart(Point[] points, double r, double fieldSideLength, double gridCellLength)
         {
             // [x,y,z]-тый элемент grid содержит все индексы звёзд, принадлежащие к этой ячейке
             var grid = GetGrid(points, fieldSideLength, gridCellLength);
             // i-тый элемент adjacentPoints содержит все смежные звёзды i-той звезды
-            var adjacentPoints = GetAdjacentPoints(grid, points, r);
-            var hops = Bfs(adjacentPoints);
+            var adjacentPoints = GetAdjacentPointsSmart(grid, points, r);
+            var hops = GetHopsCountToEveryPointWithBfs(adjacentPoints);
 
             return hops;
         }
@@ -134,14 +178,13 @@ namespace CrossUniverseTravelTests
         /// </summary>
         public static int[] GetHopsCountDumb(Point[] points, double r)
         {
-            return Bfs(GetAdjacentPointsDumb(points, r));
+            return GetHopsCountToEveryPointWithBfs(GetAdjacentPointsDumb(points, r));
         }
 
-
         /// <summary>
-        /// По сетке вернуть массив списков, где i-тый список - смежные точки i-той точки
+        /// По сетке вернуть смежные вершины. i-тый список - смежные вершины i-той вершины.
         /// </summary>
-        public static List<int>[] GetAdjacentPoints(List<int>[,,] grid, Point[] points, double r)
+        public static List<int>[] GetAdjacentPointsSmart(List<int>[,,] grid, Point[] points, double r)
         {
             // Так как все звёзды располагаются в кубе, то сетка имеет размер n на n на n, где n = fieldSideLength / gridCellLength  
             var gridDiameter = grid.GetLength(0);
@@ -197,7 +240,7 @@ namespace CrossUniverseTravelTests
         }
 
         /// <summary>
-        /// По массиву координат точек вернуть массив списков, где i-тый список - смежные точки i-той точки
+        /// По массиву вершин вернуть смежные вершины. i-тый список - смежные вершины i-той вершины.
         /// </summary>
         public static List<int>[] GetAdjacentPointsDumb(Point[] points, double r)
         {
