@@ -320,7 +320,7 @@ namespace CrossUniverseTravelTests
                     // Использовал Truncate вместо Round, потому что с Round пришлось бы делать дополнительные проверки, чтобы
                     // не вылезти за границы массива. По сути, без разницы, что использовать, надо только, чтобы все
                     // ячейки сетки имели размер >= r
-                    return (int)Math.Truncate(coord);
+                    return (int)Math.Floor(coord);
                 }
 
                 var gridCellX = GetCellCoord(currentPoint.X / gridCellLength);
