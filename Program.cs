@@ -122,7 +122,7 @@ namespace CrossUniverseTravelTests
         {
             // [x,y,z]-тый элемент grid содержит все индексы звёзд, принадлежащие к этой ячейке
             var grid = GetGrid(points, fieldSideLength, gridCellLength);
-            // i-тый элемент adjacentPoints содержит все инцидентные звёзды i-той звезды
+            // i-тый элемент adjacentPoints содержит все смежные звёзды i-той звезды
             var adjacentPoints = GetAdjacentPoints(grid, points, r);
             var hops = Bfs(adjacentPoints);
 
@@ -139,7 +139,7 @@ namespace CrossUniverseTravelTests
 
 
         /// <summary>
-        /// По сетке вернуть массив списков, где i-тый список - инциндентные точки i-той точки
+        /// По сетке вернуть массив списков, где i-тый список - смежные точки i-той точки
         /// </summary>
         public static List<int>[] GetAdjacentPoints(List<int>[,,] grid, Point[] points, double r)
         {
@@ -197,7 +197,7 @@ namespace CrossUniverseTravelTests
         }
 
         /// <summary>
-        /// По массиву координат точек вернуть массив списков, где i-тый список - инциндентные точки i-той точки
+        /// По массиву координат точек вернуть массив списков, где i-тый список - смежные точки i-той точки
         /// </summary>
         public static List<int>[] GetAdjacentPointsDumb(Point[] points, double r)
         {
