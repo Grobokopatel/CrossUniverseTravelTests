@@ -308,24 +308,15 @@ namespace CrossUniverseTravelTests
             // Так как все звёзды располагаются в кубе, то сетка имеет размер n на n на n, где n = fieldSideLength / gridCellLength  
             var gridSize = (int)Math.Ceiling(fieldSideLength / gridCellLength);
             // TODO поменять на  var grid = new List<int>[gridSize * 2, gridSize * 2, gridSize * 2];? а снизу прибавлять gridSize?
-            // TODO Вроде не будет работать, если точки в случайных местах, а не привязаны к началу координат
             var grid = new List<int>[gridSize, gridSize, gridSize];
 
             for (int i = 0; i < points.Length; i++)
             {
                 var currentPoint = points[i];
 
-                int GetCellCoord(double coord)
-                {
-                    // Использовал Truncate вместо Round, потому что с Round пришлось бы делать дополнительные проверки, чтобы
-                    // не вылезти за границы массива. По сути, без разницы, что использовать, надо только, чтобы все
-                    // ячейки сетки имели размер >= r
-                    return (int)Math.Floor(coord);
-                }
-
-                var gridCellX = GetCellCoord(currentPoint.X / gridCellLength);
-                var gridCellY = GetCellCoord(currentPoint.Y / gridCellLength);
-                var gridCellZ = GetCellCoord(currentPoint.Z / gridCellLength);
+                var gridCellX = (int)Math.Floor(currentPoint.X / gridCellLength);
+                var gridCellY = (int)Math.Floor(currentPoint.Y / gridCellLength);
+                var gridCellZ = (int)Math.Floor(currentPoint.Z / gridCellLength);
 
                 ref var gridSlot = ref grid[gridCellX, gridCellY, gridCellZ];
                 gridSlot ??= new List<int>(4);
