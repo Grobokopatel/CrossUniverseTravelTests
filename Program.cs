@@ -39,7 +39,7 @@ namespace CrossUniverseTravelTests
             // TODO Наверное надо завести словарик, чтобы все пользовались одинаковыми терминами.
 
             // Это мне для отладки, у меня консоль в Райдере иногда не работает
-            Console.WriteLine("Here");
+            //Console.WriteLine("Here");
             // Количество звёзд
             const int pointsCount = 10000;
             // Максимальное расстояние на которое может прыгнуть корабль
@@ -51,7 +51,7 @@ namespace CrossUniverseTravelTests
             // Количество итераций
             const int testsCount = 10;
 
-            Console.WriteLine("Поиск смежных вершин в тупую");
+            Console.WriteLine("Поиск смежных вершин перебором");
             MeasureTime(pointsCount, r, fieldSideLength, testsCount, gridCellLength, false);
             Console.WriteLine();
             Console.WriteLine("Поиск смежных вершин с помощью сетки");
