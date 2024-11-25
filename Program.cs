@@ -51,10 +51,10 @@ namespace CrossUniverseTravelTests
             // Количество итераций
             const int testsCount = 10;
 
-            Console.WriteLine("Поиск смежных вершин перебором");
+            Console.WriteLine("Поиск расстояния при поиске смежных вершин перебором");
             MeasureTime(pointsCount, r, fieldSideLength, testsCount, gridCellLength, false);
             Console.WriteLine();
-            Console.WriteLine("Поиск смежных вершин с помощью сетки");
+            Console.WriteLine("Поиск расстояния при поиске смежных вершин с помощью сетки");
             MeasureTime(pointsCount, r, fieldSideLength, testsCount, gridCellLength, true);
             Console.WriteLine();
 
