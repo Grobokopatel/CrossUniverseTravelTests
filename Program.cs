@@ -121,7 +121,7 @@ namespace CrossUniverseTravelTests
                 var points = GenerateRandomPoints(pointsCount, fieldSideLength);
                 // Наш способ подсчёта расстояния
                 var hopsSmart = GetHopsCountSmart(points, r, fieldSideLength, gridCellLength);
-                // Подсчёт расстояния в тупую (точно работает правильно)
+                // Подсчёт расстояния перебором (точно работает правильно)
                 var hopsDumb = GetHopsCountDumb(points, r);
 
                 for (int j = 0; j < points.Length; j++)
@@ -174,7 +174,7 @@ namespace CrossUniverseTravelTests
         }
 
         /// <summary>
-        /// Тупой способ подсчёта расстояния перебором
+        /// Способ подсчёта расстояния перебором
         /// </summary>
         public static int[] GetHopsCountDumb(Point[] points, double r)
         {
