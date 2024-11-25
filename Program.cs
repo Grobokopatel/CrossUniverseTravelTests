@@ -209,14 +209,14 @@ namespace CrossUniverseTravelTests
                                                             && j + yDelta >= 0 && j + yDelta < gridDiameter
                                                             && k + zDelta >= 0 && k + zDelta < gridDiameter)
                                         {
-                                            var incidentCell = grid[i + xDelta, j + yDelta, k + zDelta];
+                                            var adjacentCell = grid[i + xDelta, j + yDelta, k + zDelta];
 
-                                            if (incidentCell != null)
+                                            if (adjacentCell != null)
                                             {
                                                 foreach (var i1 in currentCell)
                                                 {
                                                     var p1 = points[i1];
-                                                    foreach (var i2 in incidentCell)
+                                                    foreach (var i2 in adjacentCell)
                                                     {
                                                         var p2 = points[i2];
                                                         if (Point.GetDistance(p1, p2) <= r)
@@ -318,10 +318,8 @@ namespace CrossUniverseTravelTests
                 var gridCellY = (int)Math.Floor(currentPoint.Y / gridCellLength);
                 var gridCellZ = (int)Math.Floor(currentPoint.Z / gridCellLength);
 
-                ref var gridSlot = ref grid[gridCellX, gridCellY, gridCellZ];
-                gridSlot ??= new List<int>(4);
-
-                gridSlot.Add(i);
+                grid[gridCellX, gridCellY, gridCellZ] ??= new List<int>(4);
+                grid[gridCellX, gridCellY, gridCellZ].Add(i);
             }
 
             return grid;
